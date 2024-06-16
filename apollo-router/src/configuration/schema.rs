@@ -97,8 +97,11 @@ pub(crate) fn validate_yaml_configuration(
         })?;
 
     if migration == Mode::Upgrade {
+        tracing::info!("yaml: {:?}", yaml);
         let upgraded = upgrade_configuration(&yaml, true)?;
+        tracing::info!("upgraded yaml: {:?}", upgraded);
         let expanded_yaml = expansion.expand(&upgraded)?;
+        tracing::info!("expanded yaml: {:?}", expanded_yaml);
         if schema.validate(&expanded_yaml).is_ok() {
             yaml = upgraded;
         } else {
