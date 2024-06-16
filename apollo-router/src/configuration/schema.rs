@@ -97,11 +97,20 @@ pub(crate) fn validate_yaml_configuration(
         })?;
 
     if migration == Mode::Upgrade {
-        tracing::info!("yaml: {:?}", yaml);
+        tracing::info!("yaml debug: {:?}", yaml);
+        tracing::info!("yaml string: {:?}", serde_yaml::to_string(&yaml).unwrap());
         let upgraded = upgrade_configuration(&yaml, true)?;
-        tracing::info!("upgraded yaml: {:?}", upgraded);
+        tracing::info!("upgraded yaml debug: {:?}", upgraded);
+        tracing::info!(
+            "upgraded yaml string: {:?}",
+            serde_yaml::to_string(&upgraded).unwrap()
+        );
         let expanded_yaml = expansion.expand(&upgraded)?;
-        tracing::info!("expanded yaml: {:?}", expanded_yaml);
+        tracing::info!("expanded yaml debug: {:?}", expanded_yaml);
+        tracing::info!(
+            "expanded yaml string: {:?}",
+            serde_yaml::to_string(&expanded_yaml).unwrap()
+        );
         if schema.validate(&expanded_yaml).is_ok() {
             yaml = upgraded;
         } else {
