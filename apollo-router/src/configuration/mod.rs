@@ -509,6 +509,7 @@ impl FromStr for Configuration {
     type Err = ConfigurationError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        tracing::info!("Configuration::from_str");
         schema::validate_yaml_configuration(s, Expansion::default()?, Mode::Upgrade)?.validate()
     }
 }
