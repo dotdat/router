@@ -64,7 +64,10 @@ pub(crate) fn upgrade_configuration(
     // Transformers are loaded from a file and applied in order
     let migrations: Vec<Migration> = Asset::iter()
         .sorted()
-        .filter(|filename| filename.ends_with(".yaml"))
+        .filter(|filename| {
+            tracing::info!("Migration iter: {}", filename);
+            filename.ends_with(".yaml")
+        })
         .map(|filename| Asset::get(&filename).expect("migration must exist").data)
         .map(|data| serde_yaml::from_slice(&data).expect("migration must be valid"))
         .collect();
