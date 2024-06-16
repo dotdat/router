@@ -15,13 +15,13 @@ use crate::error::ConfigurationError;
 #[folder = "src/configuration/migrations"]
 struct Asset;
 
-#[derive(Deserialize, buildstructor::Builder)]
+#[derive(Deserialize, buildstructor::Builder, Debug)]
 struct Migration {
     description: String,
     actions: Vec<Action>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(tag = "type", rename_all = "snake_case")]
 enum Action {
     Add {
@@ -72,8 +72,11 @@ pub(crate) fn upgrade_configuration(
     let mut config = config.clone();
 
     let mut effective_migrations = Vec::new();
+    tracing::info!("Migration count: {}", migrations.len());
     for migration in &migrations {
+        tracing::info!("Applying migration: {:?}", migration);
         let new_config = apply_migration(&config, migration)?;
+        tracing::info!("New config: {:?}", config);
 
         // If the config has been modified by the migration then let the user know
         if new_config != config {
